@@ -9,8 +9,8 @@ Electron + React 19 + Tailwind v4 + shadcn. Стартовый шаблон дл
 ```bash
 pnpm dev          # electron-vite dev (main + preload + renderer)
 pnpm build        # electron-vite build (build/out/)
-pnpm dist         # build + electron-builder (latest)
-pnpm dist:beta    # build + electron-builder (beta)
+pnpm dist         # build + electron-builder (local, no publish)
+pnpm release      # build + electron-builder --publish always (CI: tag v* → GitHub release)
 pnpm typecheck    # tsc front + back
 pnpm lint         # ESLint + FSD boundaries
 ```
@@ -88,15 +88,20 @@ DRY • KISS — закон. Нарушение → вернуть PR.
 
 | Где | Что |
 |---|---|
-| `electron-builder.json` | `appId`, `productName`, `publish[0].url` |
-| `electron-builder.beta.json` | `publish[0].url` |
-| `app/config.ts` | `APP_ID`, `PRODUCT_NAME`, `FEED_URLS.latestUrl`, `FEED_URLS.betaUrl` |
+| `electron-builder.json` | `appId`, `productName`, `publish[0].owner`, `publish[0].repo` |
+| `app/config.ts` | `APP_ID`, `PRODUCT_NAME` |
 | `public/assets/` | иконки: `icon.png` (linux) + `icon.ico` (windows) + `icon.icns` (macOS) |
-| `package.json` | `name`, `description`, `author` (object с `name`+`email` для подписи), `homepage` |
+| `package.json` | `name`, `description`, `author` (object с `name`+`email` для подписи), `homepage`, `repository.url`, `bugs.url` |
 | `index.html` | `<title>` |
 
-**Инвариант:** URL в `app/config.ts` == `electron-builder.<channel>.json[publish[0].url]`.
-Проверяется автоматически: `pnpm check:placeholders` (запускается из `dist` / `dist:beta`). Bypass — `ALLOW_PLACEHOLDERS=1` (только для отладочной сборки, не для релиза).
+**Инвариант:** `APP_ID` в `app/config.ts` == `electron-builder.json[appId]`; provider в `electron-builder.json[publish[0]]` == `github` с заполненными `owner`+`repo`. Auto-updater feed запекается в `app-update.yml` при сборке — runtime mirror не нужен.
+Проверяется автоматически: `pnpm check:placeholders` (запускается из `dist` / `release`). Bypass — `ALLOW_PLACEHOLDERS=1` (только для отладочной сборки, не для релиза).
+
+## Releases (GitHub)
+
+- **Auto-publish:** push tag `v*` → `.github/workflows/release.yml` собирает на win/mac/linux и публикует **draft** Release. Открой draft → **Publish** (auto-updater видит только published).
+- **Manual:** `pnpm release` локально, требует `GH_TOKEN` (PAT с `repo` scope). В CI — `secrets.GITHUB_TOKEN`.
+- **Auto-update:** `autoUpdater` (provider=github) тянет latest published release раз в час; в dev-режиме (`!app.isPackaged`) расписание не стартует.
 
 ## STOP & ASK
 

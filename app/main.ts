@@ -1,12 +1,13 @@
 import { app, dialog } from 'electron';
 import { installIpcLogger } from '@cion-suite/core/ipc';
 import { requestSingleInstance } from '@cion-suite/core/window';
-import { APP_ID, FEED_URLS } from './config.js';
+import { APP_ID } from './config.js';
 import { bootServices } from './services/boot.js';
 import { createAutoUpdater } from './services/updater.js';
 import { openMainWindow, focusMainWindow } from './windows/main-window.js';
 import { openSplashWindow, updateSplash, closeSplashWindow } from './windows/splash-window.js';
 import { registerSystemHandlers } from './handlers/system.js';
+import { registerOvertimeHandlers } from './handlers/overtime.js';
 import type { AppServices } from './types/services.js';
 import type { AutoUpdaterController } from './types/updater.js';
 
@@ -42,13 +43,10 @@ async function bootstrap(): Promise<void> {
 
         updateSplash(50, 'Registering handlers');
         registerSystemHandlers(services);
+        registerOvertimeHandlers(services);
 
         updateSplash(70, 'Configuring updater');
-        updater = createAutoUpdater({
-            appId: APP_ID,
-            logger: services.logger,
-            feed: FEED_URLS,
-        });
+        updater = createAutoUpdater({ logger: services.logger });
 
         updateSplash(90, 'Loading interface');
         await openMainWindow();

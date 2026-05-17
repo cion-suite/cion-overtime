@@ -10,6 +10,7 @@ import { Toaster } from '@/shared/ui/shadcn/sonner';
 import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { QueryProvider } from './QueryProvider';
+import { OvertimeProvider } from './OvertimeProvider';
 
 interface AppProviderProps {
     children: ReactNode;
@@ -23,10 +24,12 @@ export function AppProvider({ children, locale }: AppProviderProps) {
                 <ThemeProvider>
                     <QueryProvider>
                         <TooltipProvider>
-                            <HashRouter>
-                                {children}
-                                <Toaster position="bottom-right" richColors />
-                            </HashRouter>
+                            <OvertimeProvider>
+                                <HashRouter>
+                                    {children}
+                                    <Toaster position="bottom-right" richColors />
+                                </HashRouter>
+                            </OvertimeProvider>
                         </TooltipProvider>
                     </QueryProvider>
                 </ThemeProvider>
