@@ -1,3 +1,5 @@
+import type { OvertimeBridge } from './overtime.js';
+
 export type UpdaterIpcResult = { ok: true } | { ok: false; error: string };
 
 export interface UpdaterChannelInfo {
@@ -19,4 +21,5 @@ export interface AppBridge {
         checkForUpdates: () => Promise<UpdaterIpcResult>;
         quitAndInstall: () => Promise<void>;
     };
+    overtime: OvertimeBridge;
 }

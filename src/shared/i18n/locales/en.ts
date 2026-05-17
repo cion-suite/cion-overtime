@@ -82,6 +82,88 @@ export const en = {
                 },
             },
         },
+        overtime: {
+            sections: {
+                add: 'Add a day',
+                deduct: 'Deduct',
+                days: 'Days',
+            },
+            balance: {
+                label: 'Balance',
+                sub: 'Accrued {{gross}} · deducted {{ded}}',
+            },
+            actions: {
+                import: 'Import',
+                export: 'Export',
+                importTooltip: 'Load JSON',
+                exportTooltip: 'Save JSON copy',
+            },
+            history: {
+                title: 'Auto-deduction history',
+                buttonAria: 'History',
+                tooltip: 'Auto-deduction history',
+                summary_one: '{{count}} entry',
+                summary_other: '{{count}} entries',
+                empty: {
+                    title: 'Empty',
+                    description: 'No auto-deductions yet.',
+                },
+                breakdown_one: '{{count}} day',
+                breakdown_other: '{{count}} days',
+                confirmDelete:
+                    'Delete this history record?\n(deductions on day cards are not reverted)',
+                deleteButton: 'Delete record',
+            },
+            addForm: {
+                date: 'Date',
+                start: 'Start',
+                end: 'End',
+                submit: 'Add',
+            },
+            autoDeduct: {
+                duration: 'Duration (hh:mm)',
+                date: 'Deduction date',
+                submit: 'Auto-deduct',
+                hint: 'Deducts from oldest days first. Days with remainder < 15 min are skipped.',
+                invalidDuration: 'Enter duration as hh:mm',
+                noEligible: 'No days with remainder ≥ 15 minutes',
+            },
+            autoDeductResult: {
+                title: 'Deducted',
+                partial: 'Requested {{requested}} · deducted {{taken}}',
+                total_one: 'Total {{taken}} from {{count}} day',
+                total_other: 'Total {{taken}} from {{count}} days',
+                ok: 'Done',
+            },
+            manualDeduct: {
+                duration: 'Deduct (hh:mm)',
+                date: 'Deduction date',
+                submit: 'Deduct',
+                invalidDuration: 'Duration hh:mm',
+            },
+            day: {
+                noDate: 'no date',
+                deducted: 'deducted {{value}}',
+                expand: 'Deduct',
+                collapse: 'Hide',
+                deleteAria: 'Delete day',
+                confirmDelete: 'Delete this day?',
+                deleteDeductionAria: 'Delete deduction',
+            },
+            list: {
+                search: 'Search by date…',
+                emptyTitle: 'Empty',
+                noDays: 'No days yet. Add the first one above.',
+                noMatches: 'Nothing matches your search.',
+            },
+            save: {
+                loadFailed: 'Failed to load',
+                bridgeMissing: 'Bridge unavailable',
+                exported: 'Exported',
+                imported: 'Imported',
+                invalidTime: 'Invalid time',
+            },
+        },
         settings: {
             groups: {
                 appearance: 'Appearance',

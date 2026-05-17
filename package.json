@@ -1,5 +1,5 @@
 {
-    "name": "@cion-suite/template",
+    "name": "@cion-suite/overtime",
     "version": "0.0.0",
     "packageManager": "pnpm@11.1.2",
     "engines": {
@@ -7,7 +7,7 @@
         "pnpm": ">=11.1.2"
     },
     "private": true,
-    "description": "Reference template skeleton — minimal Electron app consuming Cion Suite packages.",
+    "description": "Cion Overtime — учёт переработок: добавление дней, авто-списание FIFO, история.",
     "license": "GPL-3.0-or-later",
     "author": "Cion Suite",
     "homepage": "https://github.com/cion-suite/cion-template",

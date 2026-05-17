@@ -6,7 +6,8 @@ import { installCrashReporter } from '@cion-suite/core/crash';
 
 import { APP_ID, PRODUCT_NAME } from '../config.js';
 import { settingsSchema } from './settings-schema.js';
-import type { AppServices, AppSettings } from '../types/services.js';
+import { overtimeStoreSchema } from './overtime-schema.js';
+import type { AppServices, AppSettings, OvertimeStoreShape } from '../types/services.js';
 
 export function bootServices(): AppServices {
     // Installed for its process-side-effect (native crash dumps); the controller
@@ -35,5 +36,14 @@ export function bootServices(): AppServices {
         currentVersion: app.getVersion(),
     });
 
-    return { logger, storage, settings };
+    const overtime = createSettingsStore<OvertimeStoreShape>({
+        appId: APP_ID,
+        name: `${APP_ID}-overtime`,
+        schema: overtimeStoreSchema,
+        defaults: overtimeStoreSchema.parse({}),
+        currentVersion: app.getVersion(),
+        emitChanges: false,
+    });
+
+    return { logger, storage, settings, overtime };
 }

@@ -7,6 +7,7 @@ import { createAutoUpdater } from './services/updater.js';
 import { openMainWindow, focusMainWindow } from './windows/main-window.js';
 import { openSplashWindow, updateSplash, closeSplashWindow } from './windows/splash-window.js';
 import { registerSystemHandlers } from './handlers/system.js';
+import { registerOvertimeHandlers } from './handlers/overtime.js';
 import type { AppServices } from './types/services.js';
 import type { AutoUpdaterController } from './types/updater.js';
 
@@ -42,6 +43,7 @@ async function bootstrap(): Promise<void> {
 
         updateSplash(50, 'Registering handlers');
         registerSystemHandlers(services);
+        registerOvertimeHandlers(services);
 
         updateSplash(70, 'Configuring updater');
         updater = createAutoUpdater({
