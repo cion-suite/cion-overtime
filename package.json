@@ -1,6 +1,6 @@
 {
     "name": "@cion-suite/overtime",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "packageManager": "pnpm@11.1.2",
     "engines": {
         "node": ">=24.15.0",
@@ -10,13 +10,13 @@
     "description": "Cion Overtime — учёт переработок: добавление дней, авто-списание FIFO, история.",
     "license": "GPL-3.0-or-later",
     "author": "Cion Suite",
-    "homepage": "https://github.com/cion-suite/cion-template",
+    "homepage": "https://github.com/cion-suite/cion-overtime",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/cion-suite/cion-template.git"
+        "url": "git+https://github.com/cion-suite/cion-overtime.git"
     },
     "bugs": {
-        "url": "https://github.com/cion-suite/cion-template/issues"
+        "url": "https://github.com/cion-suite/cion-overtime/issues"
     },
     "type": "module",
     "main": "build/out/main/index.js",
@@ -26,7 +26,7 @@
         "preview": "electron-vite preview",
         "check:placeholders": "node scripts/check-placeholders.mjs",
         "dist": "pnpm check:placeholders && electron-vite build && electron-builder --config electron-builder.json",
-        "dist:beta": "pnpm check:placeholders && electron-vite build && electron-builder --config electron-builder.beta.json",
+        "release": "pnpm check:placeholders && electron-vite build && electron-builder --config electron-builder.json --publish always",
         "typecheck": "tsc -b --noEmit .",
         "lint": "eslint .",
         "ship": "pnpm typecheck && pnpm lint && pnpm build"

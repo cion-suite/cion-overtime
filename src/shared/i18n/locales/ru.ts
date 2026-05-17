@@ -181,10 +181,8 @@ export const ru = {
                 description: 'Переключение языка интерфейса.',
             },
             updater: {
-                label: 'Канал обновлений',
-                description: 'Beta получает pre-release сборки первой.',
-                stable: 'Стабильный',
-                beta: 'Бета',
+                label: 'Обновления',
+                description: 'Релизы публикуются на GitHub. Проверка раз в час и при запуске.',
                 unavailable: 'Мост updater недоступен в dev-preview.',
                 checking: 'Проверка…',
                 checkNow: 'Проверить обновления',

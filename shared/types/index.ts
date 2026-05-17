@@ -1,10 +1,5 @@
 export type { UpdaterInfo, UpdaterProgress } from './updater.js';
-export type {
-    AppBridge,
-    UpdaterIpcResult,
-    UpdaterChannelInfo,
-    ErrorReport,
-} from './ipc.js';
+export type { AppBridge, UpdaterIpcResult, ErrorReport } from './ipc.js';
 export type {
     Deduction,
     OvertimeEntry,

@@ -17,7 +17,7 @@ import {
 } from '@/shared/ui/shadcn/toggle-group';
 import { toast } from '@/shared/lib/toast';
 import { i18n, SUPPORTED_LOCALES, useLocale, useT } from '@/shared/i18n';
-import { useUpdaterChannel, useUpdaterCheckForUpdates } from '@/shared/lib/updater';
+import { useUpdaterCheckForUpdates } from '@/shared/lib/updater';
 
 const THEMES = ['light', 'dark'] as const;
 
@@ -26,13 +26,7 @@ export function SettingsPage() {
     const { theme, setTheme } = useTheme();
     const locale = useLocale();
 
-    const channel = useUpdaterChannel();
-    const { checking, check } = useUpdaterCheckForUpdates();
-
-    const handleChannelChange = async (next: boolean) => {
-        const r = await channel.setBeta(next);
-        if (!r.ok) toast.error(r.error ?? t('error'));
-    };
+    const { supported, checking, check } = useUpdaterCheckForUpdates();
 
     const handleCheckNow = async () => {
         const r = await check();
@@ -102,42 +96,22 @@ export function SettingsPage() {
                                     <FieldContent>
                                         <FieldTitle>{t('settings.updater.label')}</FieldTitle>
                                         <FieldDescription>
-                                            {channel.supported
+                                            {supported
                                                 ? t('settings.updater.description')
                                                 : t('settings.updater.unavailable')}
                                         </FieldDescription>
                                     </FieldContent>
-                                    {channel.supported && (
-                                        <div className="flex items-center gap-2">
-                                            <ToggleGroup
-                                                type="single"
-                                                variant="outline"
-                                                size="sm"
-                                                value={channel.isBeta ? 'beta' : 'stable'}
-                                                disabled={channel.loading}
-                                                onValueChange={(v) =>
-                                                    v &&
-                                                    void handleChannelChange(v === 'beta')
-                                                }
-                                            >
-                                                <ToggleGroupItem value="stable">
-                                                    {t('settings.updater.stable')}
-                                                </ToggleGroupItem>
-                                                <ToggleGroupItem value="beta">
-                                                    {t('settings.updater.beta')}
-                                                </ToggleGroupItem>
-                                            </ToggleGroup>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                disabled={checking}
-                                                onClick={() => void handleCheckNow()}
-                                            >
-                                                {checking
-                                                    ? t('settings.updater.checking')
-                                                    : t('settings.updater.checkNow')}
-                                            </Button>
-                                        </div>
+                                    {supported && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={checking}
+                                            onClick={() => void handleCheckNow()}
+                                        >
+                                            {checking
+                                                ? t('settings.updater.checking')
+                                                : t('settings.updater.checkNow')}
+                                        </Button>
                                     )}
                                 </Field>
                             </FieldGroup>

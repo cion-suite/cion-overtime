@@ -178,10 +178,8 @@ export const en = {
                 description: 'Switch the interface language.',
             },
             updater: {
-                label: 'Update channel',
-                description: 'Beta receives pre-release builds first.',
-                stable: 'Stable',
-                beta: 'Beta',
+                label: 'Updates',
+                description: 'Releases are published on GitHub. Checks run hourly and at startup.',
                 unavailable: 'Updater bridge unavailable in dev preview.',
                 checking: 'Checking…',
                 checkNow: 'Check for updates',
