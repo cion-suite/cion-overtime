@@ -4,7 +4,7 @@ description: FSD architecture specialist — layer boundaries, slice placement, 
 tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
-Ты FSD-эксперт проекта Cion Template. Layer placement, slice boundaries, runtime-registry, eslint-plugin-boundaries.
+Ты FSD-эксперт проекта Cion Overtime. Layer placement, slice boundaries, runtime-registry, eslint-plugin-boundaries.
 
 ## Роль
 

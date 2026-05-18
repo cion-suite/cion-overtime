@@ -1,10 +1,8 @@
-# cion-template
+# cion-overtime
 
-Reference Electron desktop application built on Cion Suite packages. Use as the starting point for new Cion apps.
+Cion Overtime — учёт переработок: добавление дней, авто-списание FIFO, история. Electron desktop app на Cion Suite packages.
 
-> **GitHub Template Repository.** Нажми **Use this template** → создай свой repo.
->
-> **Для CI после форка:** добавь в Settings → Secrets → Actions секрет
+> **Для CI:** добавь в Settings → Secrets → Actions секрет
 > `CION_SUITE_PAT` — fine-grained PAT с правом `Contents: Read` на
 > репо `cion-suite/cion-suite`. Без него CI-checkout сиблингового
 > приватного monorepo упадёт.
@@ -16,11 +14,10 @@ Reference Electron desktop application built on Cion Suite packages. Use as the 
 
 ## Install
 
-> ⚠️ **Шаблон не drop-in.** Зависимости `@cion-suite/*` подключены через
-> `link:../cion-suite/packages/*` в `package.json`. Без сиблингового
-> checkout'а monorepo `cion-suite/cion-suite` команда `pnpm install`
-> упадёт на link-resolution фазе с `ENOENT`. PAT / GitHub Packages
-> **не используются** — токен ничего не решает.
+> ⚠️ **Не drop-in.** Зависимости `@cion-suite/*` подключены через
+> `link:../cion-suite/packages/*` в `package.json` (пакеты дорабатываются
+> in-place). Без сиблингового checkout'а monorepo `cion-suite/cion-suite`
+> команда `pnpm install` упадёт на link-resolution фазе с `ENOENT`.
 
 **1. Склонируй оба репо рядом** — родительская папка должна содержать
 ОБА директория на одном уровне:
@@ -28,7 +25,7 @@ Reference Electron desktop application built on Cion Suite packages. Use as the 
 ```
 parent/
 ├── cion-suite/        # https://github.com/cion-suite/cion-suite (monorepo с пакетами)
-└── cion-template/     # этот репо
+└── cion-overtime/     # этот репо
 ```
 
 **2. Установи зависимости monorepo** (один раз):
@@ -39,18 +36,13 @@ pnpm install
 pnpm build      # сбилдить @cion-suite/* пакеты
 ```
 
-**3. Install шаблона + dev:**
+**3. Install + dev:**
 
 ```bash
-cd ../cion-template
+cd ../cion-overtime
 pnpm install
 pnpm dev
 ```
-
-> При публикации форка как самостоятельного приложения переключи
-> `link:` на `workspace:` (если форк станет частью monorepo) или
-> опубликуй `@cion-suite/*` в private registry и перевесь deps на
-> versioned-spec. Это отдельный refactor — out of scope для template.
 
 ## Commands
 
@@ -58,12 +50,12 @@ pnpm dev
 pnpm dev          # electron-vite dev (main + preload + renderer)
 pnpm build        # electron-vite build (build/out/)
 pnpm preview      # preview production-сборки
-pnpm dist         # build + electron-builder (latest channel)
-pnpm dist:beta    # build + electron-builder (beta channel)
+pnpm dist         # build + electron-builder (local, no publish)
+pnpm release      # build + electron-builder --publish always (CI: tag v* → GitHub release)
 pnpm typecheck    # tsc front + back
 pnpm lint         # ESLint + FSD boundaries
 pnpm ship         # typecheck + lint + build (pre-flight)
-pnpm check:placeholders  # ensure appId/feed URLs/pkg metadata replaced (auto-run by dist)
+pnpm check:placeholders  # ensure appId/pkg metadata replaced (auto-run by dist / release)
 ```
 
 Дополнительно — slash-команды Claude Code: `/ship` (pre-flight),
@@ -88,23 +80,10 @@ docs/       # architecture.md, planned_now.md
 
 Детально — `docs/architecture.md`.
 
-## Перед первым ship
+## Native modules
 
-См. секцию **Before first ship** в `CLAUDE.md`. Кратко:
-
-| Где | Что заменить |
-|---|---|
-| `electron-builder.json` | `appId`, `productName`, `publish[0].url` |
-| `electron-builder.beta.json` | `publish[0].url` |
-| `app/config.ts` | `APP_ID`, `PRODUCT_NAME`, `FEED_URLS.latestUrl`, `FEED_URLS.betaUrl` |
-| `public/assets/` | иконки: `icon.png` (linux) + `icon.ico` (windows) + `icon.icns` (macOS) |
-| `package.json` | `name`, `description`, `author`, `homepage` |
-
-**Инвариант:** URL в `app/config.ts` == `electron-builder.<channel>.json[publish[0].url]`.
-Проверяется автоматически через `pnpm check:placeholders` (выполняется на `dist` / `dist:beta`). Bypass для отладочной сборки — `ALLOW_PLACEHOLDERS=1`.
-
-> Нативные модули (`keytar`, `better-sqlite3`, …): после `pnpm add` запусти
-> `npx electron-builder install-app-deps`, чтобы пересобрать под ABI Electron'а.
+Нативные модули (`keytar`, `better-sqlite3`, …): после `pnpm add` запусти
+`npx electron-builder install-app-deps`, чтобы пересобрать под ABI Electron'а.
 
 ## Dependencies updates
 

@@ -1,13 +1,11 @@
 # Contributing
 
-Это **template-репозиторий**. Если ты создал свой проект через **Use this
-template** — правь под себя свободно, эти правила к твоему форку
-неприменимы. Документ ниже — для PR'ов в сам `cion-template`.
+Правила для PR'ов в `cion-overtime`.
 
 ## Setup
 
-См. [README.md → Install](./README.md#install) — нужен PAT с `read:packages`
-на org `cion-suite`.
+См. [README.md → Install](./README.md#install) — нужен сиблинговый checkout
+`cion-suite/cion-suite` (link-зависимости).
 
 ```bash
 pnpm install
