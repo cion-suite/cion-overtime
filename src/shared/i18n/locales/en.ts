@@ -124,9 +124,16 @@ export const en = {
                 duration: 'Duration (hh:mm)',
                 date: 'Deduction date',
                 submit: 'Auto-deduct',
-                hint: 'Deducts from oldest days first. Days with remainder < 15 min are skipped.',
+                hintPrefix: 'Deducts from oldest days first. Days with remainder ≤ ',
+                hintSuffix: ' min are skipped.',
                 invalidDuration: 'Enter duration as hh:mm',
-                noEligible: 'No days with remainder ≥ 15 minutes',
+                noEligible: 'No days with remainder > {{threshold}} minutes',
+            },
+            threshold: {
+                editAria: 'Edit threshold',
+                popoverTitle: 'Threshold (min)',
+                apply: 'Apply',
+                invalid: 'Enter an integer ≥ 1',
             },
             autoDeductResult: {
                 title: 'Deducted',
@@ -167,7 +174,13 @@ export const en = {
         settings: {
             groups: {
                 appearance: 'Appearance',
+                overtime: 'Overtime',
                 updates: 'Updates',
+            },
+            threshold: {
+                label: 'Card threshold (min)',
+                description:
+                    'Minimum usable remainder per card. Cards with remainder ≤ threshold are invalid; balance and auto-deduct operate in multiples of the threshold.',
             },
             theme: {
                 label: 'Theme',

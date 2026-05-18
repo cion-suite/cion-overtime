@@ -16,4 +16,9 @@ export const STORAGE = {
         key: 'cion-overtime:last-route',
         default: '/',
     }),
+    threshold: defineStorage<number>({
+        key: 'cion-overtime:threshold',
+        default: 15,
+        validate: (v): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 1,
+    }),
 };

@@ -5,6 +5,7 @@ import type { OvertimeEntry } from '@shared/types';
 
 import { useT } from '@/shared/i18n';
 import { deductedFor, isDead, remainingFor } from '@/shared/lib/overtime/helpers';
+import { useThreshold } from '@/shared/lib/threshold';
 import { fmtDateHuman, fmtMM } from '@/shared/lib/time';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/shadcn/button';
@@ -20,7 +21,8 @@ interface DayRowProps {
 
 export function DayRow({ entry, expanded, onToggle, onDelete, children }: DayRowProps) {
     const t = useT();
-    const dead = isDead(entry);
+    const { threshold } = useThreshold();
+    const dead = isDead(entry, threshold);
     const left = remainingFor(entry);
     const ded = deductedFor(entry);
 

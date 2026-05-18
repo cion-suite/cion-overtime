@@ -1,6 +1,7 @@
 import { useT } from '@/shared/i18n';
 import { useOvertime } from '@/shared/lib/overtime/context';
 import { computeTotals } from '@/shared/lib/overtime/helpers';
+import { useThreshold } from '@/shared/lib/threshold';
 import { fmtMM } from '@/shared/lib/time';
 import { cn } from '@/shared/lib/utils';
 import { Caption } from '@/shared/ui/caption';
@@ -10,7 +11,8 @@ import { ImportExportActions } from '@/features/overtime-import-export';
 export function BalanceHeader() {
     const t = useT();
     const { entries } = useOvertime();
-    const { balance, gross, deducted } = computeTotals(entries);
+    const { threshold } = useThreshold();
+    const { balance, gross, deducted } = computeTotals(entries, threshold);
     const negative = balance < 0;
 
     return (

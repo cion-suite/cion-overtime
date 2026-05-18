@@ -6,16 +6,20 @@ import type {
 
 import { uid } from '@/shared/lib/time';
 
-export const MIN_USABLE = 15;
-
 export const deductedFor = (e: OvertimeEntry): number =>
     e.deductions.reduce((s, d) => s + d.minutes, 0);
 
 export const remainingFor = (e: OvertimeEntry): number =>
     Math.max(0, e.minutes - deductedFor(e));
 
-export const isDead = (e: OvertimeEntry): boolean =>
-    e.type === 'overtime' && remainingFor(e) < MIN_USABLE;
+export const isDead = (e: OvertimeEntry, threshold: number): boolean =>
+    e.type === 'overtime' && remainingFor(e) <= threshold;
+
+export const usableFor = (e: OvertimeEntry, threshold: number): number => {
+    const left = remainingFor(e);
+    if (left <= threshold) return 0;
+    return Math.floor(left / threshold) * threshold;
+};
 
 export interface OvertimeTotals {
     balance: number;
@@ -23,17 +27,20 @@ export interface OvertimeTotals {
     deducted: number;
 }
 
-export function computeTotals(entries: OvertimeEntry[]): OvertimeTotals {
+export function computeTotals(
+    entries: OvertimeEntry[],
+    threshold: number,
+): OvertimeTotals {
     let gross = 0;
     let deducted = 0;
     let balance = 0;
     for (const e of entries) {
         if (e.type !== 'overtime') continue;
         gross += e.minutes;
-        const d = deductedFor(e);
-        deducted += d;
-        const left = e.minutes - d;
-        if (left >= MIN_USABLE) balance += left;
+        const ded = deductedFor(e);
+        deducted += ded;
+        const left = e.minutes - ded;
+        if (left > threshold) balance += Math.floor(left / threshold) * threshold;
     }
     return { balance, gross, deducted };
 }
@@ -50,6 +57,7 @@ export function computeAutoDeduct(
     autoLog: AutoLogEntry[],
     total: number,
     date: string,
+    threshold: number,
 ): AutoDeductResult {
     if (total <= 0) {
         return { entries, autoLog, taken: 0, breakdown: [] };
@@ -72,11 +80,9 @@ export function computeAutoDeduct(
     for (const ord of ordered) {
         if (need <= 0) break;
         const e = nextById.get(ord.id)!;
-        const avail = remainingFor(e);
-        if (avail < MIN_USABLE) continue;
-        let take = Math.min(need, avail);
-        const leftover = avail - take;
-        if (leftover > 0 && leftover < MIN_USABLE) take = avail;
+        const usable = usableFor(e, threshold);
+        if (usable <= 0) continue;
+        const take = Math.floor(Math.min(need, usable) / threshold) * threshold;
         if (take <= 0) continue;
         e.deductions = [
             ...e.deductions,
