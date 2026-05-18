@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppEvent } from '@cion-suite/core/ipc/renderer';
 
 import { toast } from '@/shared/lib/toast';
+import { useT } from '@/shared/i18n';
 import type { Outcome, UseUpdaterCheck } from '@/shared/types/updater';
 
 export function useUpdaterCheckForUpdates(): UseUpdaterCheck {
@@ -14,7 +15,10 @@ export function useUpdaterCheckForUpdates(): UseUpdaterCheck {
         setChecking(true);
         try {
             const r = await updater.checkForUpdates();
-            if (!r.ok) return { ok: false, error: r.error };
+            if (!r.ok) {
+                if ('retryAfter' in r) return { ok: false, error: 'rate_limit', retryAfter: r.retryAfter };
+                return { ok: false, error: r.error };
+            }
             return { ok: true };
         } finally {
             setChecking(false);
@@ -24,8 +28,31 @@ export function useUpdaterCheckForUpdates(): UseUpdaterCheck {
     return { supported, checking, check };
 }
 
-export function useUpdaterErrorToast(): void {
+export function useUpdaterNotifications(): void {
+    const t = useT();
+    const downloadedVersionRef = useRef<string | null>(null);
+
     useAppEvent('updater:error', (data) => {
         toast.error(data.message);
+    });
+
+    useAppEvent('updater:not-available', () => {
+        toast.success(t('settings.updater.notAvailable'));
+    });
+
+    useAppEvent('updater:available', (data) => {
+        toast.info(t('settings.updater.available', { version: data.version }));
+    });
+
+    useAppEvent('updater:downloaded', (data) => {
+        if (downloadedVersionRef.current === data.version) return;
+        downloadedVersionRef.current = data.version;
+        toast(t('settings.updater.downloaded', { version: data.version }), {
+            duration: Infinity,
+            action: {
+                label: t('settings.updater.install'),
+                onClick: () => window.app?.updater.quitAndInstall(),
+            },
+        });
     });
 }

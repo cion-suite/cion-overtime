@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useAppEvent } from '@cion-suite/core/ipc/renderer';
 import { useTheme } from 'next-themes';
 
+import { Badge } from '@/shared/ui/shadcn/badge';
 import { Button } from '@/shared/ui/shadcn/button';
 import { Card, CardContent } from '@/shared/ui/shadcn/card';
 import {
@@ -36,9 +38,37 @@ export function SettingsPage() {
 
     const { supported, checking, check } = useUpdaterCheckForUpdates();
 
+    type UpdateStatus =
+        | { type: 'idle' }
+        | { type: 'up-to-date' }
+        | { type: 'available'; version: string }
+        | { type: 'downloaded'; version: string };
+
+    const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ type: 'idle' });
+
+    useAppEvent('updater:not-available', () => setUpdateStatus({ type: 'up-to-date' }));
+    useAppEvent('updater:available', (d) => setUpdateStatus({ type: 'available', version: d.version }));
+    useAppEvent('updater:downloaded', (d) => setUpdateStatus({ type: 'downloaded', version: d.version }));
+
+    const statusText = checking
+        ? t('settings.updater.checking')
+        : updateStatus.type === 'up-to-date'
+          ? t('settings.updater.statusUpToDate')
+          : updateStatus.type === 'available'
+            ? t('settings.updater.statusAvailable', { version: updateStatus.version })
+            : updateStatus.type === 'downloaded'
+              ? t('settings.updater.statusDownloaded', { version: updateStatus.version })
+              : t('settings.updater.statusIdle');
+
     const handleCheckNow = async () => {
         const r = await check();
-        if (!r.ok) toast.error(r.error ?? t('error'));
+        if (!r.ok) {
+            if ('retryAfter' in r) {
+                toast.warning(t('settings.updater.rateLimited', { seconds: r.retryAfter }));
+            } else {
+                toast.error(r.error ?? t('error'));
+            }
+        }
     };
 
     function commitThreshold() {
@@ -143,26 +173,46 @@ export function SettingsPage() {
                             <FieldGroup>
                                 <Field orientation="responsive">
                                     <FieldContent>
-                                        <FieldTitle>{t('settings.updater.label')}</FieldTitle>
+                                        <FieldTitle>{t('settings.updater.currentVersion')}</FieldTitle>
                                         <FieldDescription>
                                             {supported
                                                 ? t('settings.updater.description')
                                                 : t('settings.updater.unavailable')}
                                         </FieldDescription>
                                     </FieldContent>
-                                    {supported && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={checking}
-                                            onClick={() => void handleCheckNow()}
-                                        >
-                                            {checking
-                                                ? t('settings.updater.checking')
-                                                : t('settings.updater.checkNow')}
-                                        </Button>
-                                    )}
+                                    <Badge variant="outline" className="font-mono shrink-0">
+                                        v{__APP_VERSION__}
+                                    </Badge>
                                 </Field>
+
+                                {supported && (
+                                    <Field orientation="responsive">
+                                        <FieldContent>
+                                            <FieldTitle>{t('settings.updater.statusLabel')}</FieldTitle>
+                                            <FieldDescription>{statusText}</FieldDescription>
+                                        </FieldContent>
+                                        {updateStatus.type === 'downloaded' ? (
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                onClick={() => window.app?.updater.quitAndInstall()}
+                                            >
+                                                {t('settings.updater.installNow')}
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={checking}
+                                                onClick={() => void handleCheckNow()}
+                                            >
+                                                {checking
+                                                    ? t('settings.updater.checking')
+                                                    : t('settings.updater.checkNow')}
+                                            </Button>
+                                        )}
+                                    </Field>
+                                )}
                             </FieldGroup>
                         </FieldSet>
                     </FieldGroup>

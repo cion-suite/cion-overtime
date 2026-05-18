@@ -9,6 +9,9 @@ import type { AutoUpdaterController, CreateAutoUpdaterOptions } from '../types/u
 
 const { autoUpdater } = pkg;
 
+const RATE_MIN_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes between checks
+const RATE_MAX_PER_HOUR = 4;
+
 function notesToString(notes: UpdateInfo['releaseNotes']): string | undefined {
     return typeof notes === 'string' ? notes : undefined;
 }
@@ -18,6 +21,7 @@ export function createAutoUpdater(opts: CreateAutoUpdaterOptions): AutoUpdaterCo
     let updateDownloaded = false;
     let checkTimeoutId: NodeJS.Timeout | null = null;
     let checkIntervalId: NodeJS.Timeout | null = null;
+    const checkTimestamps: number[] = [];
 
     autoUpdater.autoDownload = true;
     // main.ts before-quit handler installs pending updates explicitly; autoInstallOnAppQuit=true
@@ -87,7 +91,35 @@ export function createAutoUpdater(opts: CreateAutoUpdaterOptions): AutoUpdaterCo
         }
     }
 
+    function getRateLimitRetry(): number | null {
+        const now = Date.now();
+        const oneHourAgo = now - 60 * 60 * 1000;
+        // drop timestamps older than 1 hour
+        while (checkTimestamps.length > 0 && (checkTimestamps[0] ?? 0) < oneHourAgo) {
+            checkTimestamps.shift();
+        }
+        // enforce minimum interval between consecutive checks
+        const last = checkTimestamps[checkTimestamps.length - 1];
+        if (last != null) {
+            const elapsed = now - last;
+            if (elapsed < RATE_MIN_INTERVAL_MS) {
+                return Math.ceil((RATE_MIN_INTERVAL_MS - elapsed) / 1000);
+            }
+        }
+        // enforce maximum per hour
+        const oldest = checkTimestamps[0];
+        if (checkTimestamps.length >= RATE_MAX_PER_HOUR && oldest != null) {
+            return Math.ceil((oldest + 60 * 60 * 1000 - now) / 1000);
+        }
+        return null;
+    }
+
     async function runCheck(): Promise<UpdaterIpcResult> {
+        const retryAfter = getRateLimitRetry();
+        if (retryAfter !== null) {
+            return { ok: false, error: 'rate_limit', retryAfter };
+        }
+        checkTimestamps.push(Date.now());
         try {
             await autoUpdater.checkForUpdates();
             return { ok: true };
