@@ -1,4 +1,4 @@
 export const env = {
-    appId: 'cion-template',
-    productName: 'Cion Template',
+    appId: 'io.cion.overtime',
+    productName: 'Cion Overtime',
 } as const;

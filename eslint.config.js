@@ -7,7 +7,7 @@ export default [
     ...cionReact,
     ...cionFsd,
     {
-        name: 'cion-template/scripts',
+        name: 'cion-overtime/scripts',
         files: ['scripts/**/*.{js,mjs,cjs}'],
         languageOptions: {
             globals: {
@@ -20,7 +20,7 @@ export default [
         },
     },
     {
-        name: 'cion-template/ignores',
+        name: 'cion-overtime/ignores',
         ignores: ['build/**', 'src/shared/ui/shadcn/**'],
     },
 ];

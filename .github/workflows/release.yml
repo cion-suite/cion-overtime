@@ -24,14 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          path: cion-template
+          path: cion-overtime
 
-      - uses: ./cion-template/.github/actions/setup
+      - uses: ./cion-overtime/.github/actions/setup
         with:
           cion-suite-token: ${{ secrets.CION_SUITE_PAT }}
 
       - name: Build + publish
-        working-directory: cion-template
+        working-directory: cion-overtime
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
