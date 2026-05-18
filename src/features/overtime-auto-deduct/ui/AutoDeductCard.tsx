@@ -22,11 +22,12 @@ import { ThresholdEditor } from './ThresholdEditor.js';
 
 export function AutoDeductCard() {
     const t = useT();
-    const { autoDeduct } = useOvertime();
+    const { previewAutoDeduct, autoDeduct } = useOvertime();
     const { threshold } = useThreshold();
     const [dur, setDur] = useState('');
     const [date, setDate] = useState(todayISO);
     const [dialog, setDialog] = useState<AutoDeductDialogState | null>(null);
+    const [pendingDate, setPendingDate] = useState('');
 
     function handleSubmit() {
         const minutes = parseDur(dur);
@@ -35,13 +36,24 @@ export function AutoDeductCard() {
             return;
         }
         const targetDate = date || todayISO();
-        const r = autoDeduct(minutes, targetDate);
+        if (minutes < threshold) {
+            toast.error(t('overtime.autoDeduct.belowThreshold', { threshold }));
+            return;
+        }
+        const r = previewAutoDeduct(minutes, targetDate);
         if (r.taken === 0) {
             toast.error(t('overtime.autoDeduct.noEligible', { threshold }));
             return;
         }
-        setDur('');
+        setPendingDate(targetDate);
         setDialog({ requested: minutes, taken: r.taken, breakdown: r.breakdown });
+    }
+
+    function handleConfirm() {
+        if (!dialog) return;
+        autoDeduct(dialog.requested, pendingDate);
+        setDur('');
+        setDialog(null);
     }
 
     return (
@@ -86,6 +98,7 @@ export function AutoDeductCard() {
             <AutoDeductResultDialog
                 state={dialog}
                 onOpenChange={(open) => !open && setDialog(null)}
+                onConfirm={handleConfirm}
             />
         </>
     );

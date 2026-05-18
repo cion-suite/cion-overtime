@@ -23,11 +23,13 @@ export interface AutoDeductDialogState {
 interface AutoDeductResultDialogProps {
     state: AutoDeductDialogState | null;
     onOpenChange: (open: boolean) => void;
+    onConfirm: () => void;
 }
 
 export function AutoDeductResultDialog({
     state,
     onOpenChange,
+    onConfirm,
 }: AutoDeductResultDialogProps) {
     const t = useT();
     const open = state != null;
@@ -52,7 +54,7 @@ export function AutoDeductResultDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{t('overtime.autoDeductResult.title')}</DialogTitle>
+                    <DialogTitle>{t('overtime.autoDeduct.previewTitle')}</DialogTitle>
                     <DialogDescription className="font-mono tabular-nums">
                         {summary}
                     </DialogDescription>
@@ -72,8 +74,9 @@ export function AutoDeductResultDialog({
                 </ScrollArea>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button>{t('overtime.autoDeductResult.ok')}</Button>
+                        <Button variant="outline">{t('cancel')}</Button>
                     </DialogClose>
+                    <Button onClick={onConfirm}>{t('overtime.autoDeduct.confirm')}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

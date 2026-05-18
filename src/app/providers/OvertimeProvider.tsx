@@ -197,6 +197,17 @@ export function OvertimeProvider({ children }: { children: ReactNode }) {
         }));
     }, []);
 
+    const previewAutoDeduct = useCallback((minutes: number, date: string): AutoDeductOutcome => {
+        const r = computeAutoDeduct(
+            dataRef.current.entries,
+            dataRef.current.autoLog,
+            minutes,
+            date,
+            thresholdRef.current,
+        );
+        return { taken: r.taken, breakdown: r.breakdown };
+    }, []);
+
     const autoDeduct = useCallback((minutes: number, date: string): AutoDeductOutcome => {
         const r = computeAutoDeduct(
             dataRef.current.entries,
@@ -256,6 +267,7 @@ export function OvertimeProvider({ children }: { children: ReactNode }) {
         removeEntry,
         addDeduction,
         removeDeduction,
+        previewAutoDeduct,
         autoDeduct,
         removeAutoLog,
         exportToFile,

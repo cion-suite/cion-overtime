@@ -14,6 +14,7 @@ export interface OvertimeContextValue {
     removeEntry: (id: string) => void;
     addDeduction: (entryId: string, date: string, minutes: number) => void;
     removeDeduction: (entryId: string, dedId: string) => void;
+    previewAutoDeduct: (minutes: number, date: string) => AutoDeductOutcome;
     autoDeduct: (minutes: number, date: string) => AutoDeductOutcome;
     removeAutoLog: (id: string) => void;
     exportToFile: () => Promise<void>;
