@@ -1,31 +1,14 @@
-import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { SidebarInset, SidebarProvider } from '@/shared/ui/shadcn/sidebar';
 import { AppSidebar } from '@/widgets/app-sidebar';
 import { Navbar } from '@/widgets/app-navbar';
 import { ErrorBoundary } from '@/shared/ui/error-boundary';
-
-const SIDEBAR_OPEN_KEY = 'cion-overtime:sidebar-open';
-
-function readInitialOpen(): boolean {
-    try {
-        return localStorage.getItem(SIDEBAR_OPEN_KEY) === 'true';
-    } catch {
-        return false;
-    }
-}
+import { useLocalStorage } from '@/shared/lib/local-storage';
+import { STORAGE_KEYS } from '@/shared/config/storage-keys';
 
 export function Layout() {
-    const [open, setOpen] = useState(readInitialOpen);
-
-    useEffect(() => {
-        try {
-            localStorage.setItem(SIDEBAR_OPEN_KEY, String(open));
-        } catch {
-            /* ignore quota / privacy errors */
-        }
-    }, [open]);
+    const [open, setOpen] = useLocalStorage(STORAGE_KEYS.SIDEBAR_OPEN, true);
 
     return (
         <SidebarProvider open={open} onOpenChange={setOpen}>
