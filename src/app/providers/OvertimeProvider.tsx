@@ -9,6 +9,7 @@ import {
     type OvertimeContextValue,
 } from '@/shared/lib/overtime/context';
 import { computeAutoDeduct } from '@/shared/lib/overtime/helpers';
+import { useThreshold } from '@/shared/lib/threshold';
 import { computeInterval, uid } from '@/shared/lib/time';
 import { toast } from '@/shared/lib/toast';
 import { getErrorMessage } from '@/shared/lib/utils';
@@ -41,6 +42,10 @@ export function OvertimeProvider({ children }: { children: ReactNode }) {
     const t = useT();
     const [data, setData] = useState<OvertimeData>(EMPTY);
     const [loading, setLoading] = useState(true);
+
+    const { threshold } = useThreshold();
+    const thresholdRef = useRef(threshold);
+    thresholdRef.current = threshold;
 
     const bridge = window.app?.overtime;
     const saveTimerRef = useRef<number | null>(null);
@@ -198,6 +203,7 @@ export function OvertimeProvider({ children }: { children: ReactNode }) {
             dataRef.current.autoLog,
             minutes,
             date,
+            thresholdRef.current,
         );
         if (r.taken === 0) return { taken: 0, breakdown: [] };
         setData({ entries: r.entries, autoLog: r.autoLog });

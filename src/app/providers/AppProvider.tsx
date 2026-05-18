@@ -9,6 +9,7 @@ import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { QueryProvider } from './QueryProvider';
 import { OvertimeProvider } from './OvertimeProvider';
+import { ThresholdProvider } from './ThresholdProvider';
 
 export function AppProvider({ children }: { children: ReactNode }) {
     return (
@@ -17,12 +18,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 <ThemeProvider>
                     <QueryProvider>
                         <TooltipProvider>
-                            <OvertimeProvider>
-                                <HashRouter>
-                                    {children}
-                                    <Toaster position="bottom-right" richColors />
-                                </HashRouter>
-                            </OvertimeProvider>
+                            <ThresholdProvider>
+                                <OvertimeProvider>
+                                    <HashRouter>
+                                        {children}
+                                        <Toaster position="bottom-right" richColors />
+                                    </HashRouter>
+                                </OvertimeProvider>
+                            </ThresholdProvider>
                         </TooltipProvider>
                     </QueryProvider>
                 </ThemeProvider>

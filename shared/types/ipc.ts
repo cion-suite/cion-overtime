@@ -1,6 +1,9 @@
 import type { OvertimeBridge } from './overtime.js';
 
-export type UpdaterIpcResult = { ok: true } | { ok: false; error: string };
+export type UpdaterIpcResult =
+    | { ok: true }
+    | { ok: false; error: 'rate_limit'; retryAfter: number }
+    | { ok: false; error: string };
 
 export interface ErrorReport {
     message: string;

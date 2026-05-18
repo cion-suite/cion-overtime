@@ -126,9 +126,16 @@ export const ru = {
                 duration: 'Длительность (чч:мм)',
                 date: 'Дата списания',
                 submit: 'Автосписание',
-                hint: 'Списывает от самых старых дней. Дни с остатком < 15 мин пропускаются.',
+                hintPrefix: 'Списывает от самых старых дней. Дни с остатком ≤ ',
+                hintSuffix: ' мин пропускаются.',
                 invalidDuration: 'Введите длительность чч:мм',
-                noEligible: 'Нет дней с остатком ≥ 15 минут',
+                noEligible: 'Нет дней с остатком > {{threshold}} минут',
+            },
+            threshold: {
+                editAria: 'Изменить порог',
+                popoverTitle: 'Порог (мин)',
+                apply: 'Применить',
+                invalid: 'Введите целое число ≥ 1',
             },
             autoDeductResult: {
                 title: 'Списано',
@@ -170,7 +177,13 @@ export const ru = {
         settings: {
             groups: {
                 appearance: 'Внешний вид',
+                overtime: 'Учёт времени',
                 updates: 'Обновления',
+            },
+            threshold: {
+                label: 'Порог карточки (мин)',
+                description:
+                    'Минимум полезного остатка. Карточки с остатком ≤ порога считаются недействительными; баланс и автосписание оперируют кратными порога.',
             },
             theme: {
                 label: 'Тема',
@@ -186,6 +199,18 @@ export const ru = {
                 unavailable: 'Мост updater недоступен в dev-preview.',
                 checking: 'Проверка…',
                 checkNow: 'Проверить обновления',
+                rateLimited: 'Следующая проверка через {{seconds}} с.',
+                notAvailable: 'Обновлений нет — у вас актуальная версия',
+                available: 'Доступно обновление v{{version}}',
+                downloaded: 'v{{version}} готово к установке',
+                install: 'Перезапустить',
+                currentVersion: 'Текущая версия',
+                statusLabel: 'Статус',
+                statusIdle: 'Не проверялось',
+                statusUpToDate: 'Актуальная версия установлена',
+                statusAvailable: 'Найдено обновление v{{version}}, скачивается…',
+                statusDownloaded: 'v{{version}} скачано и готово к установке',
+                installNow: 'Установить и перезапустить',
             },
         },
     },

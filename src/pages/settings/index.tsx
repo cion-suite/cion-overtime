@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
+import { useAppEvent } from '@cion-suite/core/ipc/renderer';
 import { useTheme } from 'next-themes';
 
+import { Badge } from '@/shared/ui/shadcn/badge';
 import { Button } from '@/shared/ui/shadcn/button';
 import { Card, CardContent } from '@/shared/ui/shadcn/card';
 import {
@@ -11,12 +14,15 @@ import {
     FieldSet,
     FieldTitle,
 } from '@/shared/ui/shadcn/field';
+import { Input } from '@/shared/ui/shadcn/input';
 import {
     ToggleGroup,
     ToggleGroupItem,
 } from '@/shared/ui/shadcn/toggle-group';
 import { toast } from '@/shared/lib/toast';
 import { i18n, SUPPORTED_LOCALES, useLocale, useT } from '@/shared/i18n';
+import { useThreshold } from '@/shared/lib/threshold';
+import { parsePositiveInt } from '@/shared/lib/utils';
 import { useUpdaterCheckForUpdates } from '@/shared/lib/updater';
 
 const THEMES = ['light', 'dark'] as const;
@@ -25,13 +31,55 @@ export function SettingsPage() {
     const t = useT();
     const { theme, setTheme } = useTheme();
     const locale = useLocale();
+    const { threshold, setThreshold } = useThreshold();
+    const [thresholdDraft, setThresholdDraft] = useState(String(threshold));
+
+    useEffect(() => { setThresholdDraft(String(threshold)); }, [threshold]);
 
     const { supported, checking, check } = useUpdaterCheckForUpdates();
 
+    type UpdateStatus =
+        | { type: 'idle' }
+        | { type: 'up-to-date' }
+        | { type: 'available'; version: string }
+        | { type: 'downloaded'; version: string };
+
+    const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ type: 'idle' });
+
+    useAppEvent('updater:not-available', () => setUpdateStatus({ type: 'up-to-date' }));
+    useAppEvent('updater:available', (d) => setUpdateStatus({ type: 'available', version: d.version }));
+    useAppEvent('updater:downloaded', (d) => setUpdateStatus({ type: 'downloaded', version: d.version }));
+
+    const statusText = checking
+        ? t('settings.updater.checking')
+        : updateStatus.type === 'up-to-date'
+          ? t('settings.updater.statusUpToDate')
+          : updateStatus.type === 'available'
+            ? t('settings.updater.statusAvailable', { version: updateStatus.version })
+            : updateStatus.type === 'downloaded'
+              ? t('settings.updater.statusDownloaded', { version: updateStatus.version })
+              : t('settings.updater.statusIdle');
+
     const handleCheckNow = async () => {
         const r = await check();
-        if (!r.ok) toast.error(r.error ?? t('error'));
+        if (!r.ok) {
+            if ('retryAfter' in r) {
+                toast.warning(t('settings.updater.rateLimited', { seconds: r.retryAfter }));
+            } else {
+                toast.error(r.error ?? t('error'));
+            }
+        }
     };
+
+    function commitThreshold() {
+        const n = parsePositiveInt(thresholdDraft);
+        if (n == null) {
+            setThresholdDraft(String(threshold));
+            toast.error(t('overtime.threshold.invalid'));
+            return;
+        }
+        if (n !== threshold) setThreshold(n);
+    }
 
     return (
         <div className="mx-auto flex h-full w-full max-w-3xl min-h-0 flex-col">
@@ -90,30 +138,81 @@ export function SettingsPage() {
                         </FieldSet>
 
                         <FieldSet>
+                            <FieldLegend>{t('settings.groups.overtime')}</FieldLegend>
+                            <FieldGroup>
+                                <Field orientation="responsive">
+                                    <FieldContent>
+                                        <FieldTitle>{t('settings.threshold.label')}</FieldTitle>
+                                        <FieldDescription>
+                                            {t('settings.threshold.description')}
+                                        </FieldDescription>
+                                    </FieldContent>
+                                    <Input
+                                        id="settings-threshold"
+                                        type="number"
+                                        min={1}
+                                        step={1}
+                                        inputMode="numeric"
+                                        value={thresholdDraft}
+                                        onChange={(e) => setThresholdDraft(e.target.value)}
+                                        onBlur={commitThreshold}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                commitThreshold();
+                                            }
+                                        }}
+                                        className="w-24 tabular-nums"
+                                    />
+                                </Field>
+                            </FieldGroup>
+                        </FieldSet>
+
+                        <FieldSet>
                             <FieldLegend>{t('settings.groups.updates')}</FieldLegend>
                             <FieldGroup>
                                 <Field orientation="responsive">
                                     <FieldContent>
-                                        <FieldTitle>{t('settings.updater.label')}</FieldTitle>
+                                        <FieldTitle>{t('settings.updater.currentVersion')}</FieldTitle>
                                         <FieldDescription>
                                             {supported
                                                 ? t('settings.updater.description')
                                                 : t('settings.updater.unavailable')}
                                         </FieldDescription>
                                     </FieldContent>
-                                    {supported && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={checking}
-                                            onClick={() => void handleCheckNow()}
-                                        >
-                                            {checking
-                                                ? t('settings.updater.checking')
-                                                : t('settings.updater.checkNow')}
-                                        </Button>
-                                    )}
+                                    <Badge variant="outline" className="font-mono shrink-0">
+                                        v{__APP_VERSION__}
+                                    </Badge>
                                 </Field>
+
+                                {supported && (
+                                    <Field orientation="responsive">
+                                        <FieldContent>
+                                            <FieldTitle>{t('settings.updater.statusLabel')}</FieldTitle>
+                                            <FieldDescription>{statusText}</FieldDescription>
+                                        </FieldContent>
+                                        {updateStatus.type === 'downloaded' ? (
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                onClick={() => window.app?.updater.quitAndInstall()}
+                                            >
+                                                {t('settings.updater.installNow')}
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={checking}
+                                                onClick={() => void handleCheckNow()}
+                                            >
+                                                {checking
+                                                    ? t('settings.updater.checking')
+                                                    : t('settings.updater.checkNow')}
+                                            </Button>
+                                        )}
+                                    </Field>
+                                )}
                             </FieldGroup>
                         </FieldSet>
                     </FieldGroup>

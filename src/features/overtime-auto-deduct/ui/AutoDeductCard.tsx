@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useT } from '@/shared/i18n';
 import { useOvertime } from '@/shared/lib/overtime/context';
+import { useThreshold } from '@/shared/lib/threshold';
 import { parseDur, todayISO } from '@/shared/lib/time';
 import { toast } from '@/shared/lib/toast';
 import { Button } from '@/shared/ui/shadcn/button';
@@ -17,10 +18,12 @@ import { CAPTION_LABEL_CLS } from '@/shared/ui/caption-label';
 
 import { AutoDeductResultDialog } from './AutoDeductResultDialog.js';
 import type { AutoDeductDialogState } from './AutoDeductResultDialog.js';
+import { ThresholdEditor } from './ThresholdEditor.js';
 
 export function AutoDeductCard() {
     const t = useT();
     const { autoDeduct } = useOvertime();
+    const { threshold } = useThreshold();
     const [dur, setDur] = useState('');
     const [date, setDate] = useState(todayISO);
     const [dialog, setDialog] = useState<AutoDeductDialogState | null>(null);
@@ -34,7 +37,7 @@ export function AutoDeductCard() {
         const targetDate = date || todayISO();
         const r = autoDeduct(minutes, targetDate);
         if (r.taken === 0) {
-            toast.error(t('overtime.autoDeduct.noEligible'));
+            toast.error(t('overtime.autoDeduct.noEligible', { threshold }));
             return;
         }
         setDur('');
@@ -74,7 +77,9 @@ export function AutoDeductCard() {
                         </Button>
                     </div>
                     <FieldDescription className="text-xs">
-                        {t('overtime.autoDeduct.hint')}
+                        {t('overtime.autoDeduct.hintPrefix')}
+                        <ThresholdEditor />
+                        {t('overtime.autoDeduct.hintSuffix')}
                     </FieldDescription>
                 </FieldGroup>
             </Panel>

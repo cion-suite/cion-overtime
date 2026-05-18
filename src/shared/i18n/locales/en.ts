@@ -124,9 +124,16 @@ export const en = {
                 duration: 'Duration (hh:mm)',
                 date: 'Deduction date',
                 submit: 'Auto-deduct',
-                hint: 'Deducts from oldest days first. Days with remainder < 15 min are skipped.',
+                hintPrefix: 'Deducts from oldest days first. Days with remainder ≤ ',
+                hintSuffix: ' min are skipped.',
                 invalidDuration: 'Enter duration as hh:mm',
-                noEligible: 'No days with remainder ≥ 15 minutes',
+                noEligible: 'No days with remainder > {{threshold}} minutes',
+            },
+            threshold: {
+                editAria: 'Edit threshold',
+                popoverTitle: 'Threshold (min)',
+                apply: 'Apply',
+                invalid: 'Enter an integer ≥ 1',
             },
             autoDeductResult: {
                 title: 'Deducted',
@@ -167,7 +174,13 @@ export const en = {
         settings: {
             groups: {
                 appearance: 'Appearance',
+                overtime: 'Overtime',
                 updates: 'Updates',
+            },
+            threshold: {
+                label: 'Card threshold (min)',
+                description:
+                    'Minimum usable remainder per card. Cards with remainder ≤ threshold are invalid; balance and auto-deduct operate in multiples of the threshold.',
             },
             theme: {
                 label: 'Theme',
@@ -183,6 +196,18 @@ export const en = {
                 unavailable: 'Updater bridge unavailable in dev preview.',
                 checking: 'Checking…',
                 checkNow: 'Check for updates',
+                rateLimited: 'Next check in {{seconds}}s',
+                notAvailable: 'No updates — you are on the latest version',
+                available: 'Update available v{{version}}',
+                downloaded: 'v{{version}} ready to install',
+                install: 'Restart',
+                currentVersion: 'Current version',
+                statusLabel: 'Status',
+                statusIdle: 'Not checked yet',
+                statusUpToDate: 'You are on the latest version',
+                statusAvailable: 'Update v{{version}} found, downloading…',
+                statusDownloaded: 'v{{version}} downloaded and ready to install',
+                installNow: 'Install and restart',
             },
         },
     },
