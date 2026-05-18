@@ -4,11 +4,11 @@ import { SidebarInset, SidebarProvider } from '@/shared/ui/shadcn/sidebar';
 import { AppSidebar } from '@/widgets/app-sidebar';
 import { Navbar } from '@/widgets/app-navbar';
 import { ErrorBoundary } from '@/shared/ui/error-boundary';
-import { useLocalStorage } from '@/shared/lib/local-storage';
-import { LOCAL_STORAGE } from '@/shared/config/storage-keys';
+import { useStorage } from '@/shared/lib/local-storage';
+import { STORAGE } from '@/shared/config/storage-keys';
 
 export function Layout() {
-    const [open, setOpen] = useLocalStorage(LOCAL_STORAGE.sidebarOpen);
+    const [open, setOpen] = useStorage(STORAGE.sidebarOpen);
 
     return (
         <SidebarProvider open={open} onOpenChange={setOpen}>

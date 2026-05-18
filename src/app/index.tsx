@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { initI18n, DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from '@/shared/i18n';
-import { LOCAL_STORAGE } from '@/shared/config/storage-keys';
+import { initI18n } from '@/shared/i18n';
+import { STORAGE } from '@/shared/config/storage-keys';
 
 import { App } from './App.js';
 import { AppProvider } from './providers';
@@ -11,15 +11,11 @@ import '../entities/index.js';
 import '../features/index.js';
 import '../widgets/index.js';
 
-const savedLang = localStorage.getItem(LOCAL_STORAGE.lang.key);
-const locale: SupportedLocale = SUPPORTED_LOCALES.includes(savedLang as SupportedLocale)
-    ? (savedLang as SupportedLocale)
-    : DEFAULT_LOCALE;
-initI18n(locale);
+initI18n(STORAGE.lang.get());
 
-const savedRoute = localStorage.getItem(LOCAL_STORAGE.lastRoute.key);
+const savedRoute = STORAGE.lastRoute.get();
 const currentHash = window.location.hash.replace(/^#/, '');
-if (savedRoute && savedRoute !== '/' && (!currentHash || currentHash === '/')) {
+if (savedRoute !== '/' && (!currentHash || currentHash === '/')) {
     window.location.hash = savedRoute;
 }
 
