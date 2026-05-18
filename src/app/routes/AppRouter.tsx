@@ -3,7 +3,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { Layout } from '@/widgets/app-layout';
 import { ROUTES } from '@/shared/config/routes';
-import { STORAGE_KEYS } from '@/shared/config/storage-keys';
+import { LOCAL_STORAGE } from '@/shared/config/storage-keys';
 
 const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })));
 const SettingsPage = lazy(() =>
@@ -14,7 +14,7 @@ function RouteRestorer() {
     const { pathname } = useLocation();
     useEffect(() => {
         try {
-            localStorage.setItem(STORAGE_KEYS.LAST_ROUTE, pathname);
+            localStorage.setItem(LOCAL_STORAGE.lastRoute.key, pathname);
         } catch {
             // ignore quota/privacy errors
         }

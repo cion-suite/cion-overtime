@@ -5,10 +5,10 @@ import { AppSidebar } from '@/widgets/app-sidebar';
 import { Navbar } from '@/widgets/app-navbar';
 import { ErrorBoundary } from '@/shared/ui/error-boundary';
 import { useLocalStorage } from '@/shared/lib/local-storage';
-import { STORAGE_KEYS } from '@/shared/config/storage-keys';
+import { LOCAL_STORAGE } from '@/shared/config/storage-keys';
 
 export function Layout() {
-    const [open, setOpen] = useLocalStorage(STORAGE_KEYS.SIDEBAR_OPEN, true);
+    const [open, setOpen] = useLocalStorage(LOCAL_STORAGE.sidebarOpen);
 
     return (
         <SidebarProvider open={open} onOpenChange={setOpen}>

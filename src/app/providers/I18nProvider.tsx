@@ -2,13 +2,13 @@ import { useEffect, type ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
 import { i18n } from '@/shared/i18n';
-import { STORAGE_KEYS } from '@/shared/config/storage-keys';
+import { LOCAL_STORAGE } from '@/shared/config/storage-keys';
 
 export function I18nProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         function onLangChange(lang: string) {
             try {
-                localStorage.setItem(STORAGE_KEYS.LANG, lang);
+                localStorage.setItem(LOCAL_STORAGE.lang.key, lang);
             } catch {
                 // ignore quota/privacy errors
             }
