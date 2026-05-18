@@ -2,8 +2,6 @@ import type { ReactNode } from 'react';
 import { HashRouter } from 'react-router-dom';
 
 import { TooltipProvider } from '@/shared/ui/shadcn/tooltip';
-import type { SupportedLocale } from '@/shared/i18n';
-
 import { ErrorBoundary } from '@/shared/ui/error-boundary';
 import { Toaster } from '@/shared/ui/shadcn/sonner';
 
@@ -12,15 +10,10 @@ import { ThemeProvider } from './ThemeProvider';
 import { QueryProvider } from './QueryProvider';
 import { OvertimeProvider } from './OvertimeProvider';
 
-interface AppProviderProps {
-    children: ReactNode;
-    locale?: SupportedLocale;
-}
-
-export function AppProvider({ children, locale }: AppProviderProps) {
+export function AppProvider({ children }: { children: ReactNode }) {
     return (
         <ErrorBoundary>
-            <I18nProvider locale={locale}>
+            <I18nProvider>
                 <ThemeProvider>
                     <QueryProvider>
                         <TooltipProvider>
