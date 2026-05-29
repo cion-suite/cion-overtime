@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAppEvent } from '@cion-suite/core/ipc/renderer';
+import { useEvent } from '@cion-suite/core/events/renderer';
 import { useTheme } from 'next-themes';
 
 import { Badge } from '@/shared/ui/shadcn/badge';
@@ -46,9 +46,9 @@ export function SettingsPage() {
 
     const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ type: 'idle' });
 
-    useAppEvent('updater:not-available', () => setUpdateStatus({ type: 'up-to-date' }));
-    useAppEvent('updater:available', (d) => setUpdateStatus({ type: 'available', version: d.version }));
-    useAppEvent('updater:downloaded', (d) => setUpdateStatus({ type: 'downloaded', version: d.version }));
+    useEvent('updater:not-available', () => setUpdateStatus({ type: 'up-to-date' }));
+    useEvent('updater:available', (d) => setUpdateStatus({ type: 'available', version: d.version }));
+    useEvent('updater:downloaded', (d) => setUpdateStatus({ type: 'downloaded', version: d.version }));
 
     const statusText = checking
         ? t('settings.updater.checking')

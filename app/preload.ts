@@ -1,9 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { exposeAppEventsBridge } from '@cion-suite/core/ipc/preload';
+import { exposeEvents } from '@cion-suite/core/events/preload';
 import type { AppBridge } from '@shared/types';
 import { OVERTIME_CHANNELS } from '@shared/types';
 
-exposeAppEventsBridge();
+exposeEvents();
 
 const bridge: AppBridge = {
     signalReady: () => ipcRenderer.invoke('system:renderer-ready'),
